@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "apollo-server-express": "^2.8.1",
+    "dataloader": "^2.2.2",
+    "express": "^4.16.0",
+    "graphql": "^14.4.2",
+    "graphql-middleware": "^4.0.0",
+    "graphql-shield": "^7.6.5",
+    "graphql-tools": "^4.0.5",
+    "mongoose": "^5.6.9",
+    "nodemon": "^3.1.7"
+  },
+  "scripts": {
+    "dev": "nodemon app.js"
+  }
+}
