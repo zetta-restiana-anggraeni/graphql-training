@@ -1,29 +1,59 @@
 const Song = require('../models/song.model');
 const Playlist = require('../models/playlist.model');
 const User = require('../models/user.model');
-
+const fetch = require('node-fetch');
+const webhookUrl = 'https://webhook.site/044aa822-c79c-44d3-8b54-1818c4fbc2cb'; 
+       
 const resolvers = {
     Query: {
-        songs: async () => {
-            return await Song.find();
-        },
-        song: async (parent, { _id }) => {
-            return await Song.findById(_id);
-        }, 
-        playlists: async () => {
-            return await Playlist.find();
-        },
-        playlist: async (parent, { _id }) => {
-            return await Playlist.findById(_id);
-        },
-        users: async () => {
-            return await User.find();
-        },
-        user: async (parent, { _id }) => {
-            return await User.findById(_id);
-        },
+        songs: async (parent) => {return await Song.find();},
+        song: async (parent, { _id } ) => {return await Song.findById(_id);}, 
+        playlists: async (parent) => {return await Playlist.find();},
+        playlist: async (parent, { _id } ) => {return await Playlist.findById(_id);},
+        users: async (parent) => {return await User.find();},
+        user: async (parent, { _id } ) => {return await User.findById(_id);},
     },
     Mutation: {
+        fetchWebhook: async (parent, { title, artist, genre, duration, playlistIds }) => {
+            const newSong = new Song({ title, artist, genre, duration, playlistIds });
+            await newSong.save();
+        
+            // Meneruskan parameter mutasi ke webhook.site menggunakan node-fetch
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, artist, genre, duration, playlistIds }),
+                });
+        
+        
+                if (!response.ok) {
+                    throw new Error(`Failed to forward request: ${response.statusText}`);
+                } // Menampilkan response dari webhook.site
+        
+                return {
+                    success: true,
+                    message: 'Data forwarded successfully to webhook!',
+                    data: {
+                        title,
+                        artist,
+                        genre,
+                        duration,
+                        playlistIds,
+                    }, 
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Error forwarding request: ${error.message}`,
+                };
+            }
+        },
+        
+        // fetch webhook.site pakai post
+        //parameter mutasi di pass ke webhook.site pakai node fetch, parameter di req.body
+        //parameter samain sm addsong biasa
+        
         addSong: async (parent, { title, artist, genre, duration, playlistIds }) => {
             const newSong = new Song({ title, artist, genre, duration, playlistIds });
             await newSong.save();
@@ -65,14 +95,14 @@ const resolvers = {
     Song:{
         playlistIds: async (parent, _, { playlistLoader }) => {
             const playlistIds = parent.playlistIds;
-            console.log(`PLAYLIST ID :::: ${playlistIds}`)
+            // console.log(`PLAYLIST ID :::: ${playlistIds}`)
             return await playlistLoader.loadMany(playlistIds);
         }
     },
     SongDetails: {
         songId: async (parent, _, { songLoader }) => {
             const songIds = parent.songId;
-            console.log(`SONG ID :::: ${songIds}`);
+            // console.log(`SONG ID :::: ${songIds}`);
             return await songLoader.load(songIds);
         },
     },

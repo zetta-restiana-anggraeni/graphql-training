@@ -28,12 +28,12 @@ const serverStart = async () => {
         if (token) {
             try {
                 const decoded = jwt.verify(token.replace('Bearer ', ''), secretKey);
-                req.user = decoded;  // Simpan user dalam request jika token valid
+                req.user = decoded;  
             } catch (err) {
-                req.user = null;  // Jika token tidak valid
+                req.user = null; 
             }
         } else {
-            req.user = null;  // Jika tidak ada token
+            req.user = null;  
         }
         next();
     });
@@ -51,6 +51,7 @@ const serverStart = async () => {
         schema: protectedSchema,
         context: ({ req }) => ({
             req, 
+            user: req.user,
             playlistLoader,
             songLoader
         }),
