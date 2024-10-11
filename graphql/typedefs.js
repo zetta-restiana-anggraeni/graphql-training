@@ -25,6 +25,7 @@ const typeDefs = gql`
         _id: ID
         username: String
         password: String
+        role: String
     }
 
     type Query {
@@ -63,7 +64,21 @@ const typeDefs = gql`
 
         deleteSong(_id: ID!):Song!
         deletePlaylist(_id: ID!):Playlist!
+        fetchWebhook(
+            title: String!
+            artist: String!
+            genre: String!
+            duration: Int!
+            playlistIds: [ID!] 
+        ): ForwardResponse
     }
+
+    type ForwardResponse {
+        success: Boolean
+        message: String
+        data: Song
+    }
+
 
     input SongUpdate {
         title: String

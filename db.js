@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
-// mongoose.set('debug', true);
 
 const connectDB = async () => {
     try {
         await mongoose.connect('mongodb://localhost:27017/song-db', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useFindAndModify: true
+            useFindAndModify: false
         });
         console.log('MongoDB Connected!');
     } catch (error) {

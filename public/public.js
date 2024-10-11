@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
-const secretKey = 'admin1234';
+const secretKey = "admin1234";
 
 const publicTypeDefs = gql`
     type Query{
@@ -13,14 +13,14 @@ const publicTypeDefs = gql`
         _id: ID
         username: String
         password: String
-        token: String
+        role: String
     }
 
     type Mutation {
         register(
             username: String!
             password: String!
-        ): User!
+        ): String!
 
         login(
             username: String!
@@ -37,15 +37,26 @@ const publicResolvers = {
             if (!req.user) {
                 throw new Error('Not Authenticated');
             }
+            if (req.user.role !== 'Admin') {
+                throw new Error('Access Denied');
+            }
             return await User.findById(_id);
         },
     }, 
     Mutation: {
         register: async (parent, { username, password }) => {
+            let message = "";
             const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = new User({ username, password: hashedPassword  });
-            await newUser.save();
-            return newUser;
+            if(password===secretKey){
+                const newAdmin = new User({ username, password: hashedPassword, role:"Admin" });
+                await newAdmin.save();
+                message = "Admin Successfully Registered!";
+            }else{
+                const newUser = new User({ username, password: hashedPassword, role: "Listener" });
+                await newUser.save();
+                message = "User Successfully Registered!";
+            }
+            return message;
         },
         login: async (parent, { username, password }) => {
             const user = await User.findOne({ username: username });
@@ -57,7 +68,7 @@ const publicResolvers = {
                 throw new Error('Invalid username or password');
             }
             if(user && isPasswordValid){
-                return jwt.sign({ userId: user._id, username: user.username }, secretKey); //, { expiresIn: '1h' }
+                return jwt.sign({ userId: user._id, username: user.username, role:user.role }, secretKey); //, { expiresIn: '1h' }
             }
         },  
     },
