@@ -1,6 +1,5 @@
 const Song = require('../models/song.model');
 const Playlist = require('../models/playlist.model');
-const PlayedSong = require('../models/played.model');
 const User = require('../models/user.model');
 const fetch = require('node-fetch');
 const webhookUrl = 'https://webhook.site/044aa822-c79c-44d3-8b54-1818c4fbc2cb'; 
@@ -39,7 +38,7 @@ const resolvers = {
                         title,
                         artist,
                         genre,
-                        duration,
+                        duration, 
                         playlistIds,
                     }, 
                 };

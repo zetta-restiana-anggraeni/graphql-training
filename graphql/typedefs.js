@@ -7,6 +7,7 @@ const typeDefs = gql`
         artist: String
         genre: String
         duration: Int
+        played: Boolean
         playlistIds: [Playlist]
     }
 
@@ -43,6 +44,7 @@ const typeDefs = gql`
             artist: String!
             genre: String!
             duration: Int!
+            played: Boolean!
             playlistIds: [ID!]  
         ): Song!
 
@@ -85,6 +87,7 @@ const typeDefs = gql`
         artist: String
         genre: String
         duration: Int
+        played: Boolean
         playlistIds:[ID!]  
     }
 
