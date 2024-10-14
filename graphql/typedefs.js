@@ -7,6 +7,7 @@ const typeDefs = gql`
         artist: String
         genre: String
         duration: Int
+        played: Boolean
         playlistIds: [Playlist]
     }
 
@@ -63,6 +64,15 @@ const typeDefs = gql`
 
         deleteSong(_id: ID!):Song!
         deletePlaylist(_id: ID!):Playlist!
+
+        fetchWebhook(
+            title: String!
+            artist: String!
+            genre: String!
+            duration: Int!
+            played: Boolean!
+            playlistIds: [ID!] 
+        ): ForwardResponse
     }
 
     input SongUpdate {
@@ -81,6 +91,12 @@ const typeDefs = gql`
 
     input SongDetailsInput {
         songId: ID!
+    }
+
+    type ForwardResponse {
+        success: Boolean
+        message: String
+        data: Song
     }
 
 `;

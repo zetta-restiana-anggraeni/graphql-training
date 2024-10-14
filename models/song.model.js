@@ -17,6 +17,10 @@ const songSchema = new mongoose.Schema({
         type: Number, 
         required: true, 
     },
+    played: {
+        type: Boolean, 
+        required: true, 
+    },
     playlistIds:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Playlist'
